@@ -32,7 +32,12 @@ func getMintInfo() (*nut06.MintInfo, error) {
 	mintInfo.LongDescription = os.Getenv("MINT_DESCRIPTION_LONG")
 	mintInfo.Motd = os.Getenv("MINT_MOTD")
 
-	privateKey := secp256k1.PrivKeyFromBytes([]byte(os.Getenv("MINT_PRIVATE_KEY")))
+	privateKeyBytes, err := hex.DecodeString(os.Getenv("MINT_PRIVATE_KEY"))
+	if err != nil {
+		privateKeyBytes = []byte(os.Getenv("MINT_PRIVATE_KEY"))
+	}
+	privateKey := secp256k1.PrivKeyFromBytes(privateKeyBytes)
+
 	mintInfo.Pubkey = hex.EncodeToString(privateKey.PubKey().SerializeCompressed())
 
 	contact := os.Getenv("MINT_CONTACT_INFO")
